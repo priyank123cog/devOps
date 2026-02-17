@@ -25,9 +25,16 @@ steps:
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: '**/target/*.war'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'warfile'
     publishLocation: 'Container'
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'azure-conn'
+    appType: 'webApp'
+    appName: 'warappbhanu123'
+    package: '$(Build.ArtifactStagingDirectory)/**/*.war'
+
