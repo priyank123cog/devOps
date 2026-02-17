@@ -26,6 +26,13 @@ steps:
     SourceFolder: '$(Build.SourcesDirectory)'
     Contents: '**/target/*.war'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 
+      mv $(Build.ArtifactStagingDirectory)/*.war $(Build.ArtifactStagingDirectory)/ROOT.war
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -34,9 +41,8 @@ steps:
 - task: AzureWebApp@1
   inputs:
     azureSubscription: 'azure-conn'
-    appType: 'webApp'
+    appType: 'webAppLinux'
     appName: 'warappbhanu123'
-    package: '$(Build.ArtifactStagingDirectory)/**/*.war'
-    runtimeStack: 'TOMCAT|9.0-java11'
-    deploymentMethod: 'auto'
+    package: '$(Build.ArtifactStagingDirectory)/ROOT.war'
+    
 
