@@ -37,4 +37,6 @@ steps:
     appType: 'webApp'
     appName: 'warappbhanu123'
     package: '$(Build.ArtifactStagingDirectory)/**/*.war'
+    runtimeStack: 'TOMCAT|9.0-java11'
+    deploymentMethod: 'auto'
 
