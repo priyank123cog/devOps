@@ -32,22 +32,18 @@ steps:
   inputs:
     targetType: 'inline'
     script: 
-      mv $(Build.ArtifactStagingDirectory)/*.war $(Build.SourcesDirectory)
-- task: Docker@2
-  displayName: Build and push Docker Image
+      mv $(Build.ArtifactStagingDirectory)/*.war $(Build.ArtifactStagingDirectory)/ROOT.war
+- task: PublishBuildArtifacts@1
   inputs:
-    containerRegistry: 'acr-service-conn'
-    repository: 'warapp-image'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
-    tags: 
-      latest
-- task: AzureWebAppContainer@1
-  displayName: Deploy Container to WebApp
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'warfile'
+    publishLocation: 'Container'
+- task: AzureWebApp@1
   inputs:
     azureSubscription: 'azure-conn'
+    appType: 'webAppLinux'
     appName: 'warappbhanu123'
-    containers: 'bhanuacr123.azurecr.io/warapp-image:latest'
+    package: '$(Build.ArtifactStagingDirectory)/ROOT.war'
 
 
 
