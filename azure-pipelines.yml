@@ -28,21 +28,28 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
 - task: Bash@3
+  displayName: Move WAR to Root
   inputs:
     targetType: 'inline'
     script: 
-      mv $(Build.ArtifactStagingDirectory)/*.war $(Build.ArtifactStagingDirectory)/ROOT.war
-
-- task: PublishBuildArtifacts@1
+      mv $(Build.ArtifactStagingDirectory)/*.war $(Build.SourcesDirectory)
+- task: Docker@2
+  displayName: Build and push Docker Image
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'warfile'
-    publishLocation: 'Container'
-- task: AzureWebApp@1
+    containerRegistry: 'acr-service-conn'
+    repository: 'warapp-image'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: 
+      latest
+- task: AzureWebAppContainer@1
+  displayName: Deploy Container to WebApp
   inputs:
     azureSubscription: 'azure-conn'
-    appType: 'webAppLinux'
     appName: 'warappbhanu123'
-    package: '$(Build.ArtifactStagingDirectory)/ROOT.war'
+    containers: 'bhanuacr123.azurecr.io/warapp-image:latest'
+
+
+
     
 
